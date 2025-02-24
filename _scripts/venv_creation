@@ -66,3 +66,4 @@ pip install tensorflow-io
 pip uninstall tensorflow tensorflow-io
 pip install tensorflow==2.16.2 tensorflow-io
 pip install librosa
+pip install pandas
