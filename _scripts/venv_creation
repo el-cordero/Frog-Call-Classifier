@@ -47,23 +47,10 @@ pip install tensorflow==2.4.1 tensorflow-gpu==2.4.1 tensorflow-io matplotlib
 python -m ensurepip --default-pip
 python -m pip install --upgrade pip setuptools wheel
 
-rm -rf venv  # Remove old venv (Mac/Linux)
-rmdir /s /q venv  # Remove old venv (Windows)
-
-python -m venv venv  # Create a new virtual environment
-source venv/bin/activate  # Activate (Mac/Linux)
+deactivate
+rm -rf venv  
+python -m venv venv  
+source venv/bin/activate  
 
 pip install --upgrade pip
-pip install tensorflow tensorflow-io matplotlib mediapipe ipykernel tensorflow-macos tensorflow-metal # apple silicon
-pip install tensorflow-macos tensorflow-metal
-pip uninstall tensorflow-io
-pip install tensorflow-io\[tensorflow\] --no-cache-dir
-
-pip uninstall tensorflow-io
-pip install tensorflow-macos tensorflow-metal tensorflow-io matplotlib mediapipe ipykernel tensorflow==2.16.2 # apple silicon
-
-pip install tensorflow-io
-pip uninstall tensorflow tensorflow-io
-pip install tensorflow==2.16.2 tensorflow-io
-pip install librosa
-pip install pandas
+pip install tensorflow tensorflow-io matplotlib librosa pandas mediapipe ipykernel tensorflow-macos tensorflow-metal 
