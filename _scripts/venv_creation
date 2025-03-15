@@ -54,3 +54,7 @@ source venv/bin/activate
 
 pip install --upgrade pip
 pip install tensorflow tensorflow-io matplotlib librosa pandas mediapipe ipykernel tensorflow-macos tensorflow-metal 
+pip install nbconvert
+
+jupyter nbconvert --to script _scripts/CountAnalysis.ipynb
+python _scripts/CountAnalysis.py
