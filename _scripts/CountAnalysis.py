@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import glob
 import csv
+import soundfile as sf
 from IPython.display import clear_output
 
 # Suppress general warnings
@@ -158,27 +159,36 @@ def process_audio_file(audio_path):
         if spectrogram is None:
             break  # Stop processing if max reached
 
-        # ✅ Predict class and confidence
+        # ✅ Predict class
         prediction = model.predict(np.expand_dims(spectrogram, axis=0))
         label = int(prediction > 0.5)
-        confidence = round(float(prediction), 4)
 
-        # ✅ Assign correct save folder based on prediction
-        save_folder = POS_FOLDER if label == 1 else NEG_FOLDER
-        base_name = os.path.basename(audio_path)
-        save_path = os.path.join(save_folder, f"{base_name}_s_{spectrogram_counter:04d}.jpeg")
+        if label == 1:
+            confidence = round(float(prediction), 4)
 
-        # ✅ Save Spectrogram
-        plot_spectrogram(spectrogram, sr=sr, filename=save_path)
+            # ✅ Assign correct save folder based on prediction
+            save_folder = POS_FOLDER if label == 1 else NEG_FOLDER
 
-        # ✅ Save results to an individual CSV file per clip
-        results_path = os.path.join(save_folder, f"{base_name}_s_{spectrogram_counter:04d}.csv")
-        with open(results_path, "w", newline="") as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerow(["audiofile", "clip_no", "start_time", "end_time", "prediction", "confidence", "filepath"])
-            writer.writerow([base_name, i + 1, start_time, end_time, label, confidence, audio_path])
+            base_name = os.path.basename(audio_path)
+            save_path = os.path.join(save_folder, f"{base_name}_s_{spectrogram_counter:04d}.jpeg")
 
-        print(f"✅ Saved spectrogram: {save_path}, CSV: {results_path}")
+            # ✅ Save Spectrogram
+            save_path = os.path.join(save_folder, f"{base_name}_s_{spectrogram_counter:04d}.jpeg")
+            plot_spectrogram(spectrogram, sr=sr, filename=save_path)
+
+            # ✅ Save extracted 1-sec clip
+            clip_save_path = os.path.join(save_folder, f"{base_name}_s_{spectrogram_counter:04d}.wav")
+            sf.write(clip_save_path, clip, sr)
+            print(f"✅ Saved clip: {clip_save_path}")
+
+            # ✅ Save results to an individual CSV file per clip
+            results_path = os.path.join(save_folder, f"{base_name}_s_{spectrogram_counter:04d}.csv")
+            with open(results_path, "w", newline="") as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(["audiofile", "clip_no", "start_time", "end_time", "prediction", "confidence", "filepath"])
+                writer.writerow([base_name, i + 1, start_time, end_time, label, confidence, audio_path])
+
+            print(f"✅ Saved spectrogram: {save_path}, CSV: {results_path}")
 
         spectrogram_counter += 1  # Increment counter
 
